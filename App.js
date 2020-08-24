@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native'
 import Header from '../rn-guessing-game/components/Header'
+import StartGameScreen from './screens/StartGameScreen'
 
 export default function App() {
   return (
     <View style={styles.screen}>
-      <Header />
+      <Header title="Guess a number"/>
+      <StartGameScreen />
     </View>
   );
 }
