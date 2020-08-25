@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, Button, Alert } from 'react-native'
+import { View, Text, StyleSheet, Alert, ScrollView, FlatList } from 'react-native'
 import NumberContainer from '../components/NumberContainer'
 import Card from '../components/Card'
+import MainButton from '../components/MainButton'
+import { Ionicons } from '@expo/vector-icons'
+import BodyText from '../components/BodyText'
 
 const generateRandomBetween = (min, max, exclude) => {
     min = Math.ceil(min)
@@ -14,10 +17,28 @@ const generateRandomBetween = (min, max, exclude) => {
     }
 }
 
+// const renderListItem = (value) => {
+//     return (
+//         <View key={value} style={styles.listItem}>
+//             <BodyText>Is it {value}?</BodyText>
+//         </View>
+//     )
+// } 
+
+// HIS WAY WITH THE FLATLIST
+const renderListItem = (listLength, itemData) => (
+    <View style={styles.listItem}>
+      <BodyText>#{listLength - itemData.index}</BodyText>
+      <BodyText>{itemData.item}</BodyText>
+    </View>
+)
+
 const GameScreen = ({ userChoice, onGameOver }) => {
 
-    const [ currentGuess, setCurrentGuess ] = useState(generateRandomBetween(1, 100, userChoice))
+    const initialGuess = generateRandomBetween(1, 100, userChoice)
+    const [ currentGuess, setCurrentGuess ] = useState(initialGuess.toString())
     const [ rounds, setRounds ] = useState(0)
+    const [ guesses, setGuesses ] = useState([initialGuess])
 
     let currentLow = useRef(1)
     let currentHigh = useRef(100)
@@ -37,11 +58,12 @@ const GameScreen = ({ userChoice, onGameOver }) => {
         if (direction === 'lower') {
             currentHigh.current = currentGuess // if the number I guesses is too high, it is now the new max
         } else {
-            currentLow.current = currentGuess
+            currentLow.current = currentGuess + 1
         }
         const nextNum = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess)
         setCurrentGuess(nextNum)
-        setRounds(currRounds => currRounds + 1)
+        setRounds(prevRounds => prevRounds + 1)
+        setGuesses(currentGuesses => [nextNum.toString(),...currentGuesses])
     }
 
     return (
@@ -49,9 +71,28 @@ const GameScreen = ({ userChoice, onGameOver }) => {
             <Text>Opponent's Guess</Text>
             <NumberContainer>{currentGuess}</NumberContainer>
             <Card style={styles.buttonContainer}>
-                <Button title="LOWER" onPress={() => nextGuessHandler('lower')}/>
-                <Button title="HIGHER" onPress={() => nextGuessHandler('higher')}/>
+                {/* <Button title="LOWER" onPress={() => nextGuessHandler('lower')}/>
+                <Button title="HIGHER" onPress={() => nextGuessHandler('higher')}/> */}
+                <MainButton onPress={() => nextGuessHandler('lower')}>
+                    <Ionicons name='md-remove' size={24} color='white' />
+                </MainButton>
+                <MainButton onPress={() => nextGuessHandler('higher')}>
+                    <Ionicons name='md-add' size={24} color='white'/>
+                </MainButton>
             </Card>
+            <View style={styles.listContainer}>
+                {/* <ScrollView contentContainerStyle={styles.list}>
+                    {guesses.map(guess => renderListItem(guess))}
+                </ScrollView> */}
+                {/* HIS WAY WITH THE FLATLIST */}
+                <FlatList
+                    keyExtractor={item => item}
+                    data={guesses}
+                    renderItem={item => renderListItem(guesses.length, item)}
+                    // renderItem={renderListItem.bind(this, guesses.length)}
+                    contentContainerStyle={styles.list}
+                />
+            </View>
         </View>
     )
 }
@@ -67,7 +108,25 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         marginTop: 20,
         width: 300,
-        maxWidth: '80%'
+        maxWidth: '90%'
+    },
+    listItem: {
+        borderColor: 'black',
+        borderWidth: 1,
+        flexDirection: 'row',
+        padding: 15,
+        marginVertical: 10,
+        backgroundColor: 'white',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
+    listContainer: {
+        width: '60%',
+        flex: 1 // without this scrolling will not work on Android
+    },
+    list: {
+        flexGrow: 1, // it's more flexible than flex and the container will grow and keeps the other behavior
+        justifyContent: 'flex-end' 
     }
 })
 
