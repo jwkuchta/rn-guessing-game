@@ -25,7 +25,7 @@ const GameScreen = ({ userChoice, onGameOver }) => {
     // runs after each render if the specified dependencies change
     useEffect(() => {
         if (currentGuess === userChoice) {
-            onGameOver()
+            onGameOver(rounds)
         }
     }, [currentGuess, userChoice, onGameOver]) // the effect will rerun if one of these dependencies changes
 
@@ -41,7 +41,7 @@ const GameScreen = ({ userChoice, onGameOver }) => {
         }
         const nextNum = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess)
         setCurrentGuess(nextNum)
-        setRounds(rounds => rounds + 1)
+        setRounds(currRounds => currRounds + 1)
     }
 
     return (

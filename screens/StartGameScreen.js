@@ -15,7 +15,7 @@ import NumberContainer from '../components/NumberContainer'
 
 const StartGameScreen = props => {
 
-    const [ enteredValue, setEnteredValue ] = useState()
+    const [ enteredValue, setEnteredValue ] = useState('')
     const [ confirmed, setConfirmed ] = useState(false)
     const [ selectedNumber, setSelectedNumber ] = useState()
 
