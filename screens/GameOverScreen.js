@@ -1,7 +1,8 @@
 import React from 'react'
-import { View, StyleSheet, Button, Image } from 'react-native'
+import { View, StyleSheet, Text, Button, Image } from 'react-native'
 import BodyText from '../components/BodyText'
 import TitleText from '../components/TitleText'
+import colors from '../constants/colors'
 
 const GameOverScreen = props => {
     return (
@@ -9,14 +10,17 @@ const GameOverScreen = props => {
             <TitleText>GAME OVER!</TitleText>
             <View style={styles.imageContainer}>
                 <Image 
-                // source={require('../assets/success.png')} 
-                source={{uri: 'https://media0.giphy.com/media/Rm9RzjSAfXm4o/giphy.gif'}}
+                source={require('../assets/success.png')} 
+                // source={{uri: 'https://media0.giphy.com/media/Rm9RzjSAfXm4o/giphy.gif'}}
                 style={styles.image} 
                 // resizeMode='cover'
                 />
             </View>
-            <BodyText>Number of rounds: {props.rounds}</BodyText>
-            <BodyText>Number was: {props.userNum}</BodyText>
+            <View style={styles.resultContainer}>
+                <BodyText style={styles.resultText}>
+                    Your phone needed <Text style={styles.highlight}>{props.rounds}</Text> rounds to guess the number was: <Text style={styles.highlight}>{props.userNum}</Text>
+                </BodyText>
+            </View>
             <Button title="NEW GAME" onPress={props.onRestart}></Button>
         </View>
     )
@@ -41,6 +45,18 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         marginVertical: 30,
         overflow: 'hidden' // otherwise the image will overlap the container
+    },
+    highlight: {
+        color: colors.primary,
+        fontFamily: 'open-sans-bold'
+    },
+    resultContainer: {
+        marginHorizontal: 50,
+        marginVertical: 10
+    },
+    resultText: {
+        textAlign: 'center',
+        fontSize: 20
     }
 })
 
