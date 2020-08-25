@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, StyleSheet, Button, Alert } from 'react-native'
 import NumberContainer from '../components/NumberContainer'
 import Card from '../components/Card'
@@ -14,14 +14,23 @@ const generateRandomBetween = (min, max, exclude) => {
     }
 }
 
-const GameScreen = props => {
+const GameScreen = ({ userChoice, onGameOver }) => {
 
-    const [ currentGuess, setCurrentGuess ] = useState(generateRandomBetween(1, 100, props.userChoice))
+    const [ currentGuess, setCurrentGuess ] = useState(generateRandomBetween(1, 100, userChoice))
+    const [ rounds, setRounds ] = useState(0)
+
     let currentLow = useRef(1)
     let currentHigh = useRef(100)
 
+    // runs after each render if the specified dependencies change
+    useEffect(() => {
+        if (currentGuess === userChoice) {
+            onGameOver()
+        }
+    }, [currentGuess, userChoice, onGameOver]) // the effect will rerun if one of these dependencies changes
+
     const nextGuessHandler = direction => {
-        if ((direction === 'lower' && currentGuess < props.userChoice) || direction === 'higher' && currentGuess > props.userChoice) {
+        if ((direction === 'lower' && currentGuess < userChoice) || direction === 'higher' && currentGuess > userChoice) {
             Alert.alert("Don't lie!", "You know this is wrong...", [{ text: 'Sorry!', style: 'cancel' }])
             return
         }
@@ -32,6 +41,7 @@ const GameScreen = props => {
         }
         const nextNum = generateRandomBetween(currentLow.current, currentHigh.current, currentGuess)
         setCurrentGuess(nextNum)
+        setRounds(rounds => rounds + 1)
     }
 
     return (
