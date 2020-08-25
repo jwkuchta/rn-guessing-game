@@ -5,7 +5,8 @@ import {
     StyleSheet, 
     Button, 
     TouchableWithoutFeedback,
-    Keyboard // this is not a component it's an api
+    Keyboard, // this is not a component it's an api
+    Alert // again not a component but an api
 } from 'react-native'
 import Card from '../components/Card'
 import colors from '../constants/colors'
@@ -14,10 +15,38 @@ import Input from '../components/Input'
 const StartGameScreen = props => {
 
     const [ enteredValue, setEnteredValue ] = useState()
+    const [ confirmed, setConfirmed ] = useState(false)
+    const [ selectedNumber, setSelectedNumber ] = useState()
 
     const numberInputHandler = (inputText) => {
         // replace anything that's not a number with an empty string
         setEnteredValue(inputText.replace(/[^0-9]/g, ''))
+    }
+
+    const resetInputHandler = () => {
+        setEnteredValue('')
+        setConfirmed(false)
+    }
+
+    const confirmInputHandler = () => {
+        const chosenNumber = parseInt(enteredValue)
+        if (isNaN(chosenNumber) || chosenNumber <= 0 || chosenNumber > 99) {
+            Alert.alert(
+                'Invalid Number!', 
+                'Number has to be a number between 1 and 99', 
+                [{text: 'Okay', style: 'destructive', onPress: resetInputHandler}]
+            )
+            return
+        }
+        setConfirmed(true)
+        setSelectedNumber(parseInt(enteredValue))
+        setEnteredValue('')
+    }
+
+    let confirmedOutput
+
+    if (confirmed) {
+        confirmedOutput = <Text>Chosen Number: {selectedNumber}</Text>
     }
 
     // we have to wrap everything in TouchableWithoutFeedback component so the keyboard is
@@ -36,16 +65,24 @@ const StartGameScreen = props => {
                     keyboardType='number-pad'
                     maxLength={2}
                     value={enteredValue}
+                    onChangeText={numberInputHandler}
                     />
                     <View style={styles.buttonContainer}>
                         <View style={styles.button}>
-                            <Button title="Reset" color={colors.accent} onPress={() => {}}/>
+                            <Button 
+                            title="Reset" 
+                            color={colors.accent} 
+                            onPress={() => resetInputHandler()}/>
                         </View>
                         <View style={styles.button}>
-                            <Button title="Confirm" color={colors.primary} onPress={() => {}}/>
+                            <Button 
+                            title="Confirm" 
+                            color={colors.primary} 
+                            onPress={() => confirmInputHandler()}/>
                         </View>
                     </View>
                 </Card>
+                {confirmedOutput}
             </View>
         </TouchableWithoutFeedback>
     )
