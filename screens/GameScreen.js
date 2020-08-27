@@ -39,6 +39,8 @@ const GameScreen = ({ userChoice, onGameOver }) => {
     const [ currentGuess, setCurrentGuess ] = useState(initialGuess)
     const [ rounds, setRounds ] = useState(0)
     const [ guesses, setGuesses ] = useState([initialGuess.toString()])
+    const [ availableDeviceWidth, setAvailableDeviceWidth ] = useState(Dimensions.get('window').width)
+    const [ availableDeviceHeight, setAvailableDeviceHeight ] = useState(Dimensions.get('window').height)
 
     let currentLow = useRef(1)
     let currentHigh = useRef(100)
@@ -49,6 +51,17 @@ const GameScreen = ({ userChoice, onGameOver }) => {
             onGameOver(rounds)
         }
     }, [currentGuess, userChoice, onGameOver]) // the effect will rerun if one of these dependencies changes
+
+    useEffect(() => {
+        const updateLayout = () => {
+            setAvailableDeviceHeight(Dimensions.get('window').height)
+            setAvailableDeviceWidth(Dimensions.get('window').width)
+        }
+        Dimensions.addEventListener('change', updateLayout)
+        return () => {
+            Dimensions.removeEventListener('change', updateLayout)
+        }
+    })
 
     const nextGuessHandler = direction => {
         if ((direction === 'lower' && currentGuess < userChoice) || direction === 'higher' && currentGuess > userChoice) {
@@ -67,19 +80,43 @@ const GameScreen = ({ userChoice, onGameOver }) => {
     }
 
     // we can have a different stylesheet entirely for a different screen size
-    // let listContainerStyle = styles.listContainer // default
+    let listContainerStyle = styles.listContainer // default
     
-    // if (Dimensions.get('window').width < 350) {
-    //     listContainerStyle = styles.listContainerBig
-    // }
+    if (availableDeviceWidth < 350) {
+        listContainerStyle = styles.listContainerBig
+    }
+
+    if (availableDeviceHeight < 500) {
+        return (
+            <View style={styles.screen}>
+                <Text>Opponent's Guess</Text>
+                <NumberContainer>{currentGuess}</NumberContainer>
+                <View style={styles.controls}>
+                    <MainButton onPress={() => nextGuessHandler('lower')}>
+                        <Ionicons name='md-remove' size={24} color='white' />
+                    </MainButton>
+                    <MainButton onPress={() => nextGuessHandler('higher')}>
+                        <Ionicons name='md-add' size={24} color='white'/>
+                    </MainButton>
+                </View>
+                <View style={styles.listContainer}>
+                    <FlatList
+                        keyExtractor={item => item}
+                        data={guesses}
+                        renderItem={item => renderListItem(guesses.length, item)}
+                        // renderItem={renderListItem.bind(this, guesses.length)}
+                        contentContainerStyle={styles.list}
+                    />
+                </View>
+            </View>
+        )
+    }
 
     return (
         <View style={styles.screen}>
             <Text>Opponent's Guess</Text>
             <NumberContainer>{currentGuess}</NumberContainer>
             <Card style={styles.buttonContainer}>
-                {/* <Button title="LOWER" onPress={() => nextGuessHandler('lower')}/>
-                <Button title="HIGHER" onPress={() => nextGuessHandler('higher')}/> */}
                 <MainButton onPress={() => nextGuessHandler('lower')}>
                     <Ionicons name='md-remove' size={24} color='white' />
                 </MainButton>
@@ -139,6 +176,12 @@ const styles = StyleSheet.create({
     },
     listContainerBig: {
         flex: 1,
+        width: '80%'
+    },
+    controls: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
         width: '80%'
     }
 })

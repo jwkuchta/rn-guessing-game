@@ -1,14 +1,20 @@
 import React from 'react'
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Button, TouchableOpacity, TouchableNativeFeedback, Platform } from 'react-native'
 import colors from '../constants/colors'
 
 const MainButton = props => {
+    let ButtonComponent = TouchableOpacity
+
+    if (Platform.OS === 'android') {
+        ButtonComponent = TouchableNativeFeedback // ripple effect, only available on Android
+    }
+
     return (                                      // HOW TRANSPARENT WHEN PRESSED
-        <TouchableOpacity onPress={props.onPress} activeOpacity={0.6}>
+        <ButtonComponent onPress={props.onPress} activeOpacity={0.6}>
             <View style={styles.button}>
                 <Text style={styles.buttonText}>{props.children}</Text>
             </View>
-        </TouchableOpacity>
+        </ButtonComponent>
     )
 }
 

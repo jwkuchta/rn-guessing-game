@@ -22,7 +22,6 @@ const GameOverScreen = props => {
                     Your phone needed <Text style={styles.highlight}>{props.rounds}</Text> rounds to guess the number was: <Text style={styles.highlight}>{props.userNum}</Text>
                 </BodyText>
             </View>
-            {/* <Button title="NEW GAME" onPress={props.onRestart}></Button> */}
             <MainButton onPress={props.onRestart}>NEW GAME</MainButton>
         </View>
         </ScrollView>    
@@ -33,7 +32,8 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingVertical: 10
     },
     // you have to set width+height to 100% when using web images
     image: {
