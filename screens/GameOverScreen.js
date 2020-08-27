@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, Text, Button, Image } from 'react-native'
+import { View, StyleSheet, Text, Button, Image, Dimensions, ScrollView } from 'react-native'
 import BodyText from '../components/BodyText'
 import TitleText from '../components/TitleText'
 import colors from '../constants/colors'
@@ -7,14 +7,14 @@ import MainButton from '../components/MainButton'
 
 const GameOverScreen = props => {
     return (
-        <View style={styles.screen}>
+        <ScrollView>
+            <View style={styles.screen}>
             <TitleText>GAME OVER!</TitleText>
             <View style={styles.imageContainer}>
                 <Image 
                 source={require('../assets/success.png')} 
                 // source={{uri: 'https://media0.giphy.com/media/Rm9RzjSAfXm4o/giphy.gif'}}
                 style={styles.image} 
-                // resizeMode='cover'
                 />
             </View>
             <View style={styles.resultContainer}>
@@ -25,6 +25,7 @@ const GameOverScreen = props => {
             {/* <Button title="NEW GAME" onPress={props.onRestart}></Button> */}
             <MainButton onPress={props.onRestart}>NEW GAME</MainButton>
         </View>
+        </ScrollView>    
     )
 }
 
@@ -40,12 +41,16 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     imageContainer: {
-        width: 300,
-        height: 300,
-        borderRadius: 150,
+        // width: 300,
+        width: Dimensions.get('window').width * 0.7,
+        // height: 300,
+        height: Dimensions.get('window').width * 0.7,
+        // borderRadius: 150,
+        borderRadius: Dimensions.get('window').width * 0.7 / 2,
         borderWidth: 5,
         borderColor: 'gray',
-        marginVertical: 30,
+        // marginVertical: 30,
+        marginVertical: Dimensions.get('window').height / 40,
         overflow: 'hidden' // otherwise the image will overlap the container
     },
     highlight: {
@@ -54,11 +59,13 @@ const styles = StyleSheet.create({
     },
     resultContainer: {
         marginHorizontal: 50,
-        marginVertical: 10
+        // marginVertical: 10
+        marginVertical: Dimensions.get('window').height / 60
     },
     resultText: {
         textAlign: 'center',
-        fontSize: 20
+        // fontSize: 20
+        fontSize: Dimensions.get('window').height < 400 ? 16 : 20
     }
 })
 

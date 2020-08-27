@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, Alert, ScrollView, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Alert, FlatList, Dimensions } from 'react-native'
 import NumberContainer from '../components/NumberContainer'
 import Card from '../components/Card'
 import MainButton from '../components/MainButton'
@@ -25,7 +25,7 @@ const generateRandomBetween = (min, max, exclude) => {
 //     )
 // } 
 
-// HIS WAY WITH THE FLATLIST
+// HIS WAY WITH THE FLATLIST //
 const renderListItem = (listLength, itemData) => (
     <View style={styles.listItem}>
       <BodyText>#{listLength - itemData.index}</BodyText>
@@ -36,9 +36,9 @@ const renderListItem = (listLength, itemData) => (
 const GameScreen = ({ userChoice, onGameOver }) => {
 
     const initialGuess = generateRandomBetween(1, 100, userChoice)
-    const [ currentGuess, setCurrentGuess ] = useState(initialGuess.toString())
+    const [ currentGuess, setCurrentGuess ] = useState(initialGuess)
     const [ rounds, setRounds ] = useState(0)
-    const [ guesses, setGuesses ] = useState([initialGuess])
+    const [ guesses, setGuesses ] = useState([initialGuess.toString()])
 
     let currentLow = useRef(1)
     let currentHigh = useRef(100)
@@ -65,6 +65,13 @@ const GameScreen = ({ userChoice, onGameOver }) => {
         setRounds(prevRounds => prevRounds + 1)
         setGuesses(currentGuesses => [nextNum.toString(),...currentGuesses])
     }
+
+    // we can have a different stylesheet entirely for a different screen size
+    // let listContainerStyle = styles.listContainer // default
+    
+    // if (Dimensions.get('window').width < 350) {
+    //     listContainerStyle = styles.listContainerBig
+    // }
 
     return (
         <View style={styles.screen}>
@@ -107,6 +114,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: 20,
+        // marginTop: Dimensions.get('window').height > 600 ? 20 : 5,
         width: 300,
         maxWidth: '90%'
     },
@@ -121,15 +129,19 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     listContainer: {
-        width: '60%',
+        // width: '60%',
+        width: Dimensions.get('window').width > 350 ? '60%' : '80%',
         flex: 1 // without this scrolling will not work on Android
     },
     list: {
         flexGrow: 1, // it's more flexible than flex and the container will grow and keeps the other behavior
         justifyContent: 'flex-end' 
+    },
+    listContainerBig: {
+        flex: 1,
+        width: '80%'
     }
 })
 
 export default GameScreen
 
-// useRef also helps define a value that survives component rerenders

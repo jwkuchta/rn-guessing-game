@@ -6,7 +6,8 @@ import {
     Button, 
     TouchableWithoutFeedback,
     Keyboard, // this is not a component it's an api
-    Alert // again not a component but an api
+    Alert, // again not a component but an api
+    Dimensions // this is an API that helps find out how many pixels we have available
 } from 'react-native'
 import Card from '../components/Card'
 import colors from '../constants/colors'
@@ -111,8 +112,9 @@ const styles = StyleSheet.create({
         marginVertical: 10, // replaces marginBottom + marginTop
     },
     inputContainer: {
-        width: 300,
-        maxWidth: '80%',
+        minWidth: 300,
+        width: '80%',
+        maxWidth: '95%',
         alignItems: 'center', // left to right
     },
     buttonContainer: {
@@ -122,7 +124,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15
     },
     button: {
-        width: '40%'
+        // width: '40%'
+        width: Dimensions.get('window').width / 3.5 // this essentially does the same as percentage but gives you access to dimensions
     },
     input: {
         width: 50,
